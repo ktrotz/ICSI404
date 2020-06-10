@@ -1,0 +1,393 @@
+
+For our unit tests let's make a few assumptions:
+    1. All registers start at zero.
+    2. All code begins in instruction zero. 
+    3. Interrupt 0 prints all of the registers.
+    4. Interrupt 1 prints all of memory.
+
+
+Example: 
+I would like you to submit your set of unit tests in a format like this: Testing 'and'
+addimmediate r1 10 ( 91 0A )
+addimmediate r2 8 (92 08)
+and r1 r2 r3 (21 23)
+interrupt 0 (8000)
+R1 == 10
+R2 == 8
+R3 == 8 
+
+////////////////
+
+add (opcode 1)
+
+addimmediate r1 10 (91 0A)
+addimmediate r2 8 (92 08)
+add r1 r2 r3 (11 23)
+interrupt 0 (8000)
+R1 == 10
+R2 == 8
+R3 == 18
+
+addimmediate r1 0 (91 00)
+addimmediate r2 10 (92 0A)
+add r1 r2 r3 (11 23)
+interrupt 0 (8000)
+R1 == 0
+R2 == 10
+R3 == 10
+
+addimmediate r1 -5 (91 FB)
+addimmediate r2 27 (92 1B)
+add r1 r2 r3 (11 23)
+interrupt 0 (8000)
+R1 == -5
+R2 == 27
+R3 == 22
+
+////////////////
+
+addimmediate (opcode 9)
+
+addimmediate r1 0 (91 00)
+interrupt 0 (8000)
+R1 == 0
+
+addimmediate r2 20 (92 14)
+interrupt 0 (8000)
+R1 == 20
+
+addimmediate r3 -3 (93 FD)
+interrupt 0 (8000)
+R1 == -3
+
+/////////////////
+
+and (opcode 2)
+
+addimmediate r1 15 (91 0F)
+addimmediate r2 10 (92 0A)
+and r1 r2 r3 (21 23)
+interrupt 0 (8000)
+R1 == 15
+R2 == 10
+R3 == 10
+
+addimmediate r1 0 (91 00)
+addimmediate r2 3 (92 03)
+and r1 r2 r3 (21 23)
+interrupt 0 (8000)
+R1 == 0
+R2 == 3
+R3 == 0
+
+addimmediate r1 -10 (91 F6)
+addimmediate r2 3 (92 03)
+and r1 r2 r3 (21 23)
+interrupt 0 (8000)
+R1 == -10
+R2 == 3
+R3 == 2
+
+///////////////////////////
+
+branchifequal (opcode 10)
+
+addimmediate r1 5 (91 05)
+addimmediate r2 10 (91 0A)
+addimmediate r3 0 (93 00)
+branchifequal r1 r2 100 (10 12 64)
+addimmediate r3 1 (93 01)
+interrupt 0 (8000)
+R1 == 5
+R2 == 10
+R3 == 1
+
+addimmediate r1 4 (91 04)
+addimmediate r2 4 (91 04)
+addimmediate r3 0 (93 00)
+branchifequal r1 r2 100 (10 12 64)
+addimmediate r3 1 (93 01)
+interrupt 0 (8000)
+R1 == 4
+R2 == 4
+R3 == 0
+
+addimmediate r1 -2 (91 FE)
+addimmediate r2 2 (91 02)
+addimmediate r3 0 (93 00)
+branchifequal r1 r2 100 (10 12 64)
+addimmediate r3 1 (93 01)
+interrupt 0 (8000)
+R1 == -2
+R2 == 2
+R3 == 1
+
+
+/////////////////////////
+
+branchIfless (opcode 11)
+
+addimmediate r1 5 (91 05)
+addimmediate r2 10 (91 0A)
+addimmediate r3 0 (93 00)
+branchifless r1 r2 100 (11 12 64) 
+addimmediate r3 1 (93 01)
+interrupt 0 (8000)
+R1 == 5
+R2 == 10
+R3 == 0
+
+addimmediate r1 30 (91 1E)
+addimmediate r2 9 (91 09)
+addimmediate r3 0 (93 00)
+branchifless r1 r2 100 (11 12 64) 
+addimmediate r3 1 (93 01)
+interrupt 0 (8000)
+R1 == 30
+R2 == 9
+R3 == 1
+
+addimmediate r1 3 (91 03)
+addimmediate r2 3 (91 03)
+addimmediate r3 0 (93 00)
+branchifless r1 r2 100 (11 12 64) 
+addimmediate r3 1 (93 01)
+interrupt 0 (8000)
+R1 == 3
+R2 == 3
+R3 == 1
+
+
+
+
+////////////////////////
+
+call (opcode 13)
+
+call 555
+
+///////////////////////
+
+divide (opcode 3)
+
+addimmediate r1 20 (91 14)
+addimmediate r2 10 (92 0A)
+divide r1 r2 r3 (31 23)
+interrupt 0 (8000)
+R1 == 20
+R2 == 10
+R3 == 2
+
+addimmediate r1 100 (91 64)
+addimmediate r2 -5 (92 FB)
+divide r1 r2 r3 (31 23)
+interrupt 0 (8000)
+R1 == 100
+R2 == -5
+R3 == -20
+
+addimmediate r1 -40 (91 D8)
+addimmediate r2 -5 (92 FB)
+divide r1 r2 r3 (31 23)
+interrupt 0 (8000)
+R1 == -40
+R2 == -5
+R3 == 8
+
+
+////////////////////////
+
+halt (opcode 0)
+
+addimmediate r1 9 (91 09)
+halt (0000)
+interrupt 0 (8000)
+R1 value wouldn't be printed
+
+/////////////////////////
+
+interrupt (opcode 8)
+
+addimmediate r1 9 (91 09)
+interrupt 0 (8000)
+R1 == 9
+
+addimmediate r1 15 (91 0F)
+store r1 r2 10 (15 12 0A)
+interrupt 1 (8001)
+R2 == 15 + 20 bytes
+
+////////////////////////
+
+jump (opcode 12)
+
+
+jump 1000
+
+
+///////////////////////
+
+load (opcode 14)
+
+addimmediate r1 10 (91 0A)
+store r1 r2 10 (15 12 0A)
+load r3 r2 10 (14 12 0A)
+interrupt 1 (8001)
+R2 == 10 + 20 bytes
+R3 == (10 + 20 bytes) + 20 bytes
+
+addimmediate r2 0 (92 00)
+store r1 r2 15 (15 12 0F)
+load r3 r2 30 (14 12 1E)
+interrupt 1 (8001)
+R2 == 0 + 30 bytes
+R3 == (0 + 30 bytes) + 60 bytes
+
+addimmediate r1 -2 (91 FE)
+store r1 r2 8 (15 12 08)
+load r3 r2 10 (14 12 0A)
+interrupt 1 (8001)
+R2 == -2 + 16 bytes
+R3 == (-2 + 16 bytes) + 20 bytes
+
+
+///////////////////////
+
+multiply (opcode 4)
+
+addimmediate r1 5 (91 05)
+addimmediate r2 10 (91 0A)
+multiply r1 r2 r3 (41 23)
+interrupt 0 (8000)
+R1 == 5
+R2 == 10
+R3 == 50
+
+addimmediate r1 0 (91 00)
+addimmediate r2 30 (92 1E)
+multiply r1 r2 r3 (41 23)
+interrupt 0 (8000)
+R1 == 0
+R2 == 30
+R3 == 0
+
+addimmediate r1 -10 (91 F6)
+addimmediate r2 20 (92 14)
+multiply r1 r2 r3 (41 23)
+interrupt 0 (8000)
+R1 == -10
+R2 == 20
+R3 == -200
+
+///////////////////////
+
+or (opcode 6)
+
+addimmediate r1 25 (91 19)
+addimmediate r2 10 (92 0A)
+or r1 r2 r3 (61 23)
+interrupt 0 (8000)
+R1 == 25
+R2 == 10
+R3 == 27
+
+addimmediate r1 0 (91 00)
+addimmediate r2 33 (92 21)
+or r1 r2 r3 (61 23)
+interrupt 0 (8000)
+R1 == 0
+R2 == 33
+R3 == 33
+
+addimmediate r1 -16 (91 F0)
+addimmediate r2 9 (92 09)
+or r1 r2 r3 (61 23)
+interrupt 0 (8000)
+R1 == -16
+R2 == 9
+R3 == -7
+
+///////////////////////
+
+pop (opcode 7)
+
+addimmediate r1 10 (91 0A)
+addimmediate r2 8 (91 08)
+push r1 (71 00)
+push r2 (72 00)
+pop r1 (71 00)
+interrupt 1 (8001)
+R1 == 10
+R15 == bottom most byte - 8 + 4
+
+///////////////////////
+
+push (opcode 7)
+
+addimmediate r1 5 (91 05)
+push r1 (71 00)
+interrupt 1 (8001)
+R1 == 5
+R15 == bottom most bytes - 4
+
+////////////////////////
+
+return (opcode 7)
+
+addimmediate r1 10 (91 0A)
+addimmediate r2 8 (91 08)
+push r1 (71 00)
+push r2 (72 00)
+return
+R2 == 8
+R15 == bottom most byte - 8 + 4
+R15 == address of R2
+
+/////////////////////////
+
+store (opcode 15)
+
+addimmediate r1 15 (91 0F)
+store r1 r2 10 (15 12 0A)
+interrupt 1 (8001)
+R2 == 15 + 20 bytes
+
+addimmediate r1 0 (91 00)
+store r1 r2 5 (15 12 05)
+interrupt 1 (8001)
+R2 == 0 + 10 bytes
+
+addimmediate r1 -5 (91 0F)
+store r1 r2 8 (15 12 08)
+interrupt 1 (8001)
+R2 == -5 + 16 bytes
+
+/////////////////////////
+
+subtract (opcode 5)
+
+addimmediate r1 55 (91 37)
+addimmediate r2 11 (92 0B)
+subtract r1 r2 r3 (51 23)
+interrupt 0 (8000)
+R1 == 55
+R2 == 11
+R3 == 44
+
+addimmediate r1 13 (91 0D)
+addimmediate r2 19 (92 13)
+subtract r1 r2 r3 (51 23)
+interrupt 0 (8000)
+R1 == 13
+R2 == 19
+R3 == -6
+
+addimmediate r1 15 (91 0F)
+addimmediate r2 15 (92 0F)
+subtract r1 r2 r3 (51 23)
+interrupt 0 (8000)
+R1 == 15
+R2 == 15
+R3 == 0
+
+

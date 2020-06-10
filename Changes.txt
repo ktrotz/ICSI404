@@ -1,0 +1,4 @@
+1. Added bullets points and headings to make it easier to read.
+2. Added comments the the instruction to help visualize the process.
+3. Explained how the program counter works
+4. Indented the examples for easier reading
